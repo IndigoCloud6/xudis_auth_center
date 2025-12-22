@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +20,7 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
+    private final UserDetailsService userDetailsService;
 
     @Value("${auth.jwt.token-validity-seconds}")
     private long tokenValiditySeconds;
@@ -53,9 +56,12 @@ public class AuthService {
             throw new RuntimeException("Invalid or expired refresh token");
         }
 
+        // Load user details to get authorities
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        
         // Create authentication for token generation
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                username, null, null
+                userDetails, null, userDetails.getAuthorities()
         );
 
         String newAccessToken = jwtTokenService.generateAccessToken(authentication);

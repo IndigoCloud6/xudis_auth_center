@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS authorities (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Insert default admin user
--- Password: admin123! (bcrypt encoded)
+-- Password: admin123! (bcrypt encoded with Spring BCryptPasswordEncoder, cost factor 10)
 INSERT INTO users (username, password, enabled) VALUES 
-('admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', TRUE);
+('admin', '$2a$10$2HJz6S0R5t8J6snaC6qh6eEd2U1/RVwmHs7gfKNAGVyXrlccq5e.W', TRUE);
 
 INSERT INTO authorities (user_id, authority) VALUES 
 ((SELECT id FROM users WHERE username = 'admin'), 'ROLE_ADMIN'),
