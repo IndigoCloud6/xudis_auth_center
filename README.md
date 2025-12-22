@@ -45,12 +45,12 @@
 启动 MySQL 和 Redis：
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 验证服务状态：
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 ### 2. 构建和运行应用
@@ -67,7 +67,12 @@ mvn spring-boot:run
 
 ### 3. 验证部署
 
-访问以下端点验证：
+使用自动化测试脚本：
+```bash
+./test-auth-center.sh
+```
+
+或手动访问以下端点验证：
 - OIDC Discovery: http://localhost:9000/.well-known/openid-configuration
 - JWKS: http://localhost:9000/oauth2/jwks
 
@@ -365,6 +370,15 @@ INSERT INTO authorities (user_id, authority) VALUES
 可以通过 `RegisteredClientRepository` 编程方式添加，或直接插入数据库。
 
 ## 故障排查
+
+### 自动化测试
+运行 `./test-auth-center.sh` 脚本可快速验证所有功能是否正常工作。该脚本会测试：
+- OIDC Discovery
+- JWKS 端点
+- 自定义登录 API
+- Token 刷新
+- OAuth2 客户端凭证流程
+- 注销功能
 
 ### 无法连接数据库
 ```bash
