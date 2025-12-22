@@ -17,8 +17,9 @@ CREATE TABLE IF NOT EXISTS authorities (
     UNIQUE KEY uk_user_authority (user_id, authority)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insert default admin user
+-- !!!WARNING!!!: Default admin user for DEVELOPMENT only
 -- Password: admin123! (bcrypt encoded with Spring BCryptPasswordEncoder, cost factor 10)
+-- REMOVE or CHANGE this user before deploying to production!
 INSERT INTO users (username, password, enabled) VALUES 
 ('admin', '$2a$10$2HJz6S0R5t8J6snaC6qh6eEd2U1/RVwmHs7gfKNAGVyXrlccq5e.W', TRUE);
 

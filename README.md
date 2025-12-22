@@ -308,20 +308,47 @@ spring:
 
 ## 安全注意事项
 
-1. **生产环境配置**：
-   - 修改所有默认密码
-   - 使用 HTTPS
-   - 配置正确的 issuer URL
-   - 限制 CORS 允许的源
+### ⚠️ 生产环境配置
 
-2. **密钥管理**：
-   - 当前使用运行时生成的 RSA 密钥对
-   - 生产环境建议使用持久化的密钥或密钥管理服务
+**必须在生产环境中完成以下配置**:
 
-3. **Token 安全**：
+1. **更改默认密码**：
+   - 默认用户 `admin/admin123!` 仅用于开发测试
+   - 生产环境必须删除或修改此用户
+
+2. **使用 HTTPS**：
+   - 配置 SSL/TLS 证书
+   - 更新 `auth.jwt.issuer` 为 HTTPS URL
+
+3. **密钥管理**：
+   - 当前 RSA 密钥在每次重启时重新生成
+   - 生产环境应使用持久化密钥或密钥管理服务（如 AWS KMS, Azure Key Vault）
+   - 应用重启会使所有现有 token 失效
+
+4. **数据库安全**：
+   - 更改 docker-compose.yml 中的默认密码
+   - 使用环境变量或密钥管理系统存储数据库凭证
+   - 启用 SSL 连接到数据库
+
+5. **CORS 配置**：
+   - 限制 `auth.cors.allowed-origins` 为实际需要的域名
+   - 避免使用通配符 `*`
+
+### 当前安全特性
+
+1. **密码哈希**：
+   - 使用 BCrypt 算法（cost factor 10）
+   - 密码不以明文形式存储
+
+2. **Token 安全**：
    - Access Token 过期时间：1小时
    - Refresh Token 过期时间：24小时
    - 注销的 Token 会被加入 Redis 黑名单
+   - JWT 使用 RSA-256 签名
+
+3. **PKCE 支持**：
+   - Authorization Code flow 要求 PKCE
+   - 防止授权码拦截攻击
 
 ## 开发说明
 

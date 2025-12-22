@@ -10,6 +10,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +52,9 @@ public class JwtTokenService {
     private static final String REFRESH_TOKEN_PREFIX = "refresh_token:";
     private static final String TOKEN_BLACKLIST_PREFIX = "blacklist:";
 
-    // Initialize RSA keypair
+    // Initialize RSA keypair at startup - NOTE: Keys are regenerated on restart
+    // For production, consider persisting keys or using a key management service
+    @PostConstruct
     public void init() throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
@@ -67,14 +70,12 @@ public class JwtTokenService {
 
         this.signer = new RSASSASigner(privateKey);
         this.verifier = new RSASSAVerifier(publicKey);
+        
+        log.info("RSA keypair initialized with key ID: {}", rsaKey.getKeyID());
     }
 
     public String generateAccessToken(Authentication authentication) {
         try {
-            if (rsaKey == null) {
-                init();
-            }
-
             String username = authentication.getName();
             String authorities = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
@@ -164,10 +165,6 @@ public class JwtTokenService {
 
     public boolean validateToken(String token) {
         try {
-            if (rsaKey == null) {
-                init();
-            }
-
             SignedJWT signedJWT = SignedJWT.parse(token);
             
             // Verify signature
@@ -190,18 +187,12 @@ public class JwtTokenService {
         }
     }
 
-    public JWKSource<SecurityContext> jwkSource() throws Exception {
-        if (rsaKey == null) {
-            init();
-        }
+    public JWKSource<SecurityContext> jwkSource() {
         JWKSet jwkSet = new JWKSet(rsaKey);
         return new ImmutableJWKSet<>(jwkSet);
     }
 
-    public RSAKey getRsaKey() throws Exception {
-        if (rsaKey == null) {
-            init();
-        }
+    public RSAKey getRsaKey() {
         return rsaKey;
     }
 }
