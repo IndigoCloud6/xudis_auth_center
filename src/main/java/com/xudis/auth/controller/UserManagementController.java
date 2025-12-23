@@ -23,7 +23,7 @@ public class UserManagementController {
     private final UserManagementService userManagementService;
 
     @PostMapping
-    public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest request) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
             UserResponse response = userManagementService.createUser(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -41,7 +41,7 @@ public class UserManagementController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<Object> updateUser(
             @PathVariable String username,
             @Valid @RequestBody UpdateUserRequest request) {
         try {
@@ -61,7 +61,7 @@ public class UserManagementController {
     }
 
     @DeleteMapping("/{username}")
-    public ResponseEntity<?> deleteUser(@PathVariable String username) {
+    public ResponseEntity<Object> deleteUser(@PathVariable String username) {
         try {
             userManagementService.deleteUser(username);
             Map<String, String> response = new HashMap<>();
@@ -81,7 +81,7 @@ public class UserManagementController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<?> getUser(@PathVariable String username) {
+    public ResponseEntity<Object> getUser(@PathVariable String username) {
         try {
             UserResponse response = userManagementService.getUser(username);
             return ResponseEntity.ok(response);
