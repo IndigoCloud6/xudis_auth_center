@@ -1,5 +1,6 @@
 package com.xudis.authclient.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xudis.authclient.dto.LoginRequest;
 import com.xudis.authclient.dto.LoginResponse;
 import com.xudis.authclient.dto.RefreshRequest;
@@ -19,11 +20,14 @@ public class AuthCenterService {
 
     private final WebClient webClient;
     private final String baseUrl;
+    private final ObjectMapper objectMapper;
 
     public AuthCenterService(WebClient.Builder webClientBuilder,
-                            @Value("${auth.center.base-url}") String baseUrl) {
+                            @Value("${auth.center.base-url}") String baseUrl,
+                            ObjectMapper objectMapper) {
         this.baseUrl = baseUrl;
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -175,7 +179,7 @@ public class AuthCenterService {
             }
             
             String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
-            return new com.fasterxml.jackson.databind.ObjectMapper().readValue(payload, Map.class);
+            return objectMapper.readValue(payload, Map.class);
         } catch (Exception e) {
             log.error("Failed to parse JWT: {}", e.getMessage());
             throw new RuntimeException("Failed to parse JWT: " + e.getMessage(), e);

@@ -29,13 +29,22 @@ fi
 
 # Check if port 8080 is available
 echo -e "\n${YELLOW}[2] 检查端口 8080...${NC}"
-if lsof -Pi :8080 -sTCP:LISTEN -t >/dev/null 2>&1; then
-    echo -e "${RED}✗ 端口 8080 已被占用${NC}"
-    echo -e "${YELLOW}请停止占用端口的程序或修改 application.yml 中的端口配置${NC}"
-    exit 1
+if command -v lsof >/dev/null 2>&1; then
+    if lsof -Pi :8080 -sTCP:LISTEN -t >/dev/null 2>&1; then
+        echo -e "${RED}✗ 端口 8080 已被占用${NC}"
+        echo -e "${YELLOW}请停止占用端口的程序或修改 application.yml 中的端口配置${NC}"
+        exit 1
+    fi
+elif command -v netstat >/dev/null 2>&1; then
+    if netstat -tln 2>/dev/null | grep -q ':8080 '; then
+        echo -e "${RED}✗ 端口 8080 已被占用${NC}"
+        echo -e "${YELLOW}请停止占用端口的程序或修改 application.yml 中的端口配置${NC}"
+        exit 1
+    fi
 else
-    echo -e "${GREEN}✓ 端口 8080 可用${NC}"
+    echo -e "${YELLOW}⚠ 无法检查端口状态（lsof 和 netstat 都不可用）${NC}"
 fi
+echo -e "${GREEN}✓ 端口 8080 可用${NC}"
 
 # Build and run the client
 echo -e "\n${YELLOW}[3] 启动测试客户端...${NC}"
