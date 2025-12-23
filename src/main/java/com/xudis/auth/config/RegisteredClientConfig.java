@@ -44,6 +44,8 @@ public class RegisteredClientConfig {
                         .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                         .redirectUri("http://127.0.0.1:8080/login/oauth2/code/demo-client")
                         .redirectUri("http://localhost:8080/login/oauth2/code/demo-client")
+                        .redirectUri("http://localhost:8080/login/oauth2/code/xudis-auth")
+                        .redirectUri("http://127.0.0.1:8080/login/oauth2/code/xudis-auth")
                         .redirectUri("http://127.0.0.1:8080/authorized")
                         .redirectUri("http://localhost:8080/authorized")
                         .postLogoutRedirectUri("http://127.0.0.1:8080/logged-out")
