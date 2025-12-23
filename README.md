@@ -439,6 +439,38 @@ docker-compose down
 docker-compose down -v
 ```
 
+## 测试客户端
+
+项目包含一个测试客户端应用，用于测试认证中心的各种功能。
+
+### 启动测试客户端
+
+```bash
+cd test-client
+./start-client.sh
+```
+
+或者手动启动：
+
+```bash
+cd test-client
+mvn spring-boot:run
+```
+
+客户端将在 `http://localhost:8080` 启动。
+
+### 测试客户端功能
+
+测试客户端提供了一个 Web 界面，用于测试以下功能：
+
+1. **OAuth2 Authorization Code + PKCE 流程** - 标准的 OAuth2 授权码登录
+2. **自定义登录 API** - 测试用户名/密码登录、刷新和注销
+3. **OIDC Discovery** - 查看 OpenID Connect 配置
+4. **JWKS 端点** - 获取 JWT 验证公钥
+5. **Client Credentials 流程** - 测试机器对机器认证
+
+详细使用说明请参阅 [test-client/README.md](test-client/README.md)。
+
 ## 许可证
 
 MIT License
