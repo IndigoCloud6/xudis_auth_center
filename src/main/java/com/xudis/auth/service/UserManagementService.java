@@ -79,16 +79,17 @@ public class UserManagementService {
 
         // Update authorities if provided (full replacement)
         if (request.getAuthorities() != null) {
-            // Clear existing authorities
+            // Remove all existing authorities
             user.getAuthorities().clear();
+            
+            // Flush changes to database to trigger orphan removal
+            userRepository.saveAndFlush(user);
 
             // Add new authorities
-            Set<Authority> newAuthorities = new HashSet<>();
             for (String authorityName : request.getAuthorities()) {
                 Authority authority = new Authority(user, authorityName);
-                newAuthorities.add(authority);
+                user.getAuthorities().add(authority);
             }
-            user.getAuthorities().addAll(newAuthorities);
             log.info("Authorities updated for user: {}", username);
         }
 

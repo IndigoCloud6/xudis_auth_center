@@ -134,6 +134,114 @@ curl -X POST http://localhost:9000/api/auth/logout \
   -H "Authorization: Bearer eyJraWQiOiI..."
 ```
 
+### 用户管理 API
+
+> **⚠️ 重要提示**: 以下用户管理接口当前为临时开放状态(`permitAll`)，便于初期开发和测试。生产环境中应该加上管理员权限控制。
+
+#### 1. 创建用户
+
+```bash
+curl -X POST http://localhost:9000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "testuser",
+    "password": "password123",
+    "enabled": true,
+    "authorities": ["ROLE_USER"]
+  }'
+```
+
+响应示例：
+```json
+{
+  "username": "testuser",
+  "enabled": true,
+  "authorities": ["ROLE_USER"]
+}
+```
+
+如果用户名已存在，返回 409 Conflict：
+```json
+{
+  "error": "Username already exists: testuser"
+}
+```
+
+#### 2. 查询用户信息
+
+```bash
+curl -X GET http://localhost:9000/api/users/testuser
+```
+
+响应示例：
+```json
+{
+  "username": "testuser",
+  "enabled": true,
+  "authorities": ["ROLE_USER"]
+}
+```
+
+#### 3. 更新用户信息
+
+更新密码：
+```bash
+curl -X PUT http://localhost:9000/api/users/testuser \
+  -H "Content-Type: application/json" \
+  -d '{
+    "password": "newpassword123"
+  }'
+```
+
+更新启用状态：
+```bash
+curl -X PUT http://localhost:9000/api/users/testuser \
+  -H "Content-Type: application/json" \
+  -d '{
+    "enabled": false
+  }'
+```
+
+更新权限（全量覆盖）：
+```bash
+curl -X PUT http://localhost:9000/api/users/testuser \
+  -H "Content-Type: application/json" \
+  -d '{
+    "authorities": ["ROLE_USER", "ROLE_ADMIN"]
+  }'
+```
+
+同时更新多个字段：
+```bash
+curl -X PUT http://localhost:9000/api/users/testuser \
+  -H "Content-Type: application/json" \
+  -d '{
+    "password": "newpassword123",
+    "enabled": true,
+    "authorities": ["ROLE_USER", "ROLE_ADMIN"]
+  }'
+```
+
+#### 4. 删除用户
+
+```bash
+curl -X DELETE http://localhost:9000/api/users/testuser
+```
+
+响应示例：
+```json
+{
+  "message": "User deleted successfully"
+}
+```
+
+如果用户不存在，返回 404 Not Found：
+```json
+{
+  "error": "User not found: testuser"
+}
+```
+
 ### OAuth2 标准流程
 
 #### 1. Client Credentials 模式
@@ -235,6 +343,14 @@ curl -X POST http://localhost:9000/oauth2/token \
 - `POST /api/auth/login` - 用户登录
 - `POST /api/auth/refresh` - 刷新令牌
 - `POST /api/auth/logout` - 用户注销
+
+### 用户管理端点 (⚠️ 临时开放，无需认证)
+> **注意**: 以下用户管理接口当前为临时开放状态(`permitAll`)，便于初期开发和测试。生产环境中应该加上管理员权限控制。
+
+- `POST /api/users` - 创建用户
+- `GET /api/users/{username}` - 查询用户信息
+- `PUT /api/users/{username}` - 更新用户信息
+- `DELETE /api/users/{username}` - 删除用户
 
 ### 登录页面
 - `GET /login` - OAuth2 登录页面
@@ -362,11 +478,15 @@ src/main/java/com/xudis/auth/
 │   ├── RedisConfig.java
 │   └── RegisteredClientConfig.java
 ├── controller/          # 控制器
-│   └── AuthController.java
+│   ├── AuthController.java
+│   └── UserManagementController.java
 ├── dto/                 # 数据传输对象
 │   ├── LoginRequest.java
 │   ├── AuthResponse.java
-│   └── RefreshRequest.java
+│   ├── RefreshRequest.java
+│   ├── CreateUserRequest.java
+│   ├── UpdateUserRequest.java
+│   └── UserResponse.java
 ├── entity/              # 实体类
 │   ├── User.java
 │   └── Authority.java
@@ -376,13 +496,28 @@ src/main/java/com/xudis/auth/
 │   └── CustomUserDetailsService.java
 ├── service/             # 业务逻辑
 │   ├── AuthService.java
-│   └── JwtTokenService.java
+│   ├── JwtTokenService.java
+│   └── UserManagementService.java
 └── AuthCenterApplication.java
 ```
 
 ### 添加新用户
 
-在数据库中插入：
+**推荐方式：使用用户管理 API**
+
+```bash
+curl -X POST http://localhost:9000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "newuser",
+    "password": "userpassword",
+    "enabled": true,
+    "authorities": ["ROLE_USER"]
+  }'
+```
+
+**或者直接在数据库中插入：**
+
 ```sql
 -- 密码需要使用 BCrypt 加密
 INSERT INTO users (username, password, enabled) VALUES 
