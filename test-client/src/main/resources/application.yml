@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: xudis-auth-test-client
+  
+  security:
+    oauth2:
+      client:
+        registration:
+          xudis-auth:
+            client-id: demo-client
+            client-secret: demo-secret
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid,profile,email,read,write
+            client-name: Xudis Auth Client
+        
+        provider:
+          xudis-auth:
+            issuer-uri: http://localhost:9000
+            authorization-uri: http://localhost:9000/oauth2/authorize
+            token-uri: http://localhost:9000/oauth2/token
+            user-info-uri: http://localhost:9000/userinfo
+            jwk-set-uri: http://localhost:9000/oauth2/jwks
+            user-name-attribute: sub
+
+# Auth Center Base URL
+auth:
+  center:
+    base-url: http://localhost:9000
+    
+# Logging
+logging:
+  level:
+    root: INFO
+    com.xudis.authclient: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
