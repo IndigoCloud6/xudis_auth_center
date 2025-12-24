@@ -35,7 +35,7 @@ public class AuthCenterService {
      */
     public LoginResponse login(String username, String password) {
         log.info("Testing login with username: {}", username);
-        
+
         LoginRequest request = new LoginRequest(username, password);
         
         try {

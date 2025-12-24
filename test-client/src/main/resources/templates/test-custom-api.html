@@ -57,26 +57,27 @@
             </div>
 
             <!-- Refresh Token Form -->
-            <div th:if="${refreshToken and !refreshSuccess}" class="subsection">
+            <th:block th:if="${refreshToken != null and refreshToken != '' and !(refreshSuccess ?: false)}">
                 <h3>2. 刷新 Token</h3>
                 <form th:action="@{/test/refresh}" method="post" class="test-form">
                     <input type="hidden" name="refreshToken" th:value="${refreshToken}">
                     <button type="submit" class="btn btn-primary">测试刷新 Token</button>
                 </form>
-            </div>
+            </th:block>
 
             <div th:if="${refreshSuccess}" class="subsection success">
                 <p>✅ Token 刷新成功！上面显示的是新的 Token。</p>
             </div>
 
             <!-- Logout Form -->
-            <div th:if="${accessToken and !logoutSuccess}" class="subsection">
+            <th:block th:if="${!#strings.isEmpty(accessToken) and !(logoutSuccess ?: false)}">
                 <h3>3. 注销登录</h3>
                 <form th:action="@{/test/logout}" method="post" class="test-form">
                     <input type="hidden" name="accessToken" th:value="${accessToken}">
                     <button type="submit" class="btn btn-danger">测试注销</button>
                 </form>
-            </div>
+            </th:block>
+
 
             <div th:if="${logoutSuccess}" class="subsection success">
                 <p>✅ 注销成功！</p>

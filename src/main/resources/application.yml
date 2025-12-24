@@ -1,14 +1,27 @@
 server:
   port: 9000
 
+  servlet:
+    session:
+      cookie:
+        same-site: lax
+        secure: false
+
 spring:
   application:
     name: xudis-auth-center
+
+
+  session:
+    store-type: redis
+    timeout: 30m
+    redis:
+      namespace: xudis-auth-center:session
   
   datasource:
     url: jdbc:mysql://localhost:3306/auth_center?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: authuser
-    password: authpass
+    username: root
+    password: 1SDy0Lrw91PkakNq
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:
@@ -24,7 +37,7 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: redispass
+      password: maxyun
       timeout: 6000ms
       lettuce:
         pool:
@@ -33,7 +46,7 @@ spring:
           min-idle: 0
   
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     locations: classpath:db/migration
 

@@ -56,7 +56,7 @@ public class RegisteredClientConfig {
                         .scope("read")
                         .scope("write")
                         .clientSettings(ClientSettings.builder()
-                                .requireAuthorizationConsent(true)
+                                .requireAuthorizationConsent(false)
                                 .requireProofKey(true)
                                 .build())
                         .tokenSettings(TokenSettings.builder()
