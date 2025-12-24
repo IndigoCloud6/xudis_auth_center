@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/sso").authenticated()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
