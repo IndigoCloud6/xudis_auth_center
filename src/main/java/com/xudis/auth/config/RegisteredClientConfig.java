@@ -15,6 +15,8 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Configuration
@@ -37,6 +39,7 @@ public class RegisteredClientConfig {
                         .clientId("demo-client")
                         .clientSecret(passwordEncoder.encode("demo-secret"))
                         .clientName("Demo Client")
+                        .clientSecretExpiresAt(Instant.now().plus(365*10, ChronoUnit. DAYS))
                         .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                         .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                         .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)

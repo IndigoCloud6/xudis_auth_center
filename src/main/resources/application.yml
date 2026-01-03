@@ -19,7 +19,7 @@ spring:
       namespace: xudis-auth-center:session
   
   datasource:
-    url: jdbc:mysql://localhost:3306/auth_center?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3306/auth_center?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: 1qaz!QAZ
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -35,9 +35,9 @@ spring:
   
   data:
     redis:
-      host: localhost
+      host: 127.0.0.1
       port: 6379
-      password: maxyun
+      password: 2wsx@WSX
       timeout: 6000ms
       lettuce:
         pool:
